@@ -2,11 +2,9 @@ import os
 import openai 
 import subprocess 
 import dotenv
-
-from helpers.openai import Model
 from pathlib import Path
 
-ENGINE = Model.GPT_3_5_TURBO
+ENGINE = "gpt-3.5-turbo"
 MAX_TOKENS = 2048
 FEEDBACK = ""
 
