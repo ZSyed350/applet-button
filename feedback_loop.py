@@ -16,18 +16,19 @@ openai.api_key = os.getenv("API_KEY")
 def get_chat_response(prompt: str) -> str:
     """Get a chat response using the language model API"""
     global FEEDBACK
+    # FIXME else???
     if FEEDBACK != "":
         prompt = f"This is what should be most important. Modify the code to follow the feedback as given: {feedback} \n{prompt}"
-        response = openai.ChatCompletion.create(
-            model=ENGINE,
-            messages=[{"role": "user",
-                       "content": prompt}],
-            temperature=0.5,
-            max_tokens=MAX_TOKENS,
-        )
-        completion = response["choices"][0]["message"]["content"]
+    response = openai.ChatCompletion.create(
+        model=ENGINE,
+        messages=[{"role": "user",
+                   "content": prompt}],
+        temperature=0.5,
+        max_tokens=MAX_TOKENS,
+    )
+    completion = response["choices"][0]["message"]["content"]
     filtered_completion = completion.replace(
-        "```python", "").replace("```", "")
+    "```python", "").replace("```", "")
     return filtered_completion
 
 def gen_code_from_prompt(prompt: str) -> str:
@@ -88,7 +89,7 @@ def code_loop(new_prompt: str = "", og_prompt: str = "", error: str = "", loop: 
         test_cases = gen_test_cases_from_prompt(test_prompt)
 
         # Write both the code and test cases to the same file
-        write_code_to_file(code, save_dir/title)
+        write_code_to_file(code, os.path.join(save_dir, title))  #FIXME Invalid argument: 'C:\\Users\\zsyed\\OneDrive\\Documents\\code\\applet-bucket\\generated\\filename = "even_numbers.py"'
         write_code_to_file(test_cases, 'test.py')
         test_str = f"{code} \n{test_cases}"
         write_code_to_file(test_str, 'checker.py')
@@ -123,4 +124,9 @@ def code_loop(new_prompt: str = "", og_prompt: str = "", error: str = "", loop: 
         code_loop(test_str, og_prompt, error, loop, title)
 
 if __name__ == "__main__":
+    # TODO: set up i.e. if there is no generated file, make a generated file, maybe should be moved to an init function
+    gen_dirname = os.path.join(os.getcwd(), 'generated')
+    if not os.path.exists(gen_dirname):
+        os.makedirs(gen_dirname)
+    
     code_loop()
