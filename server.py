@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from flask_cors import CORS
 from gpt_loop import code_loop
 import os
@@ -58,9 +58,9 @@ def run_applet():
     data = request.get_json()
     app_name = data.get('app_name')
 
-    result = "The app name is " + app_name
+    result = f"Received: {app_name}"
     # Call applet here
-    return {'result': result}
+    return jsonify({'result': result})
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080)

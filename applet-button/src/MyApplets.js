@@ -14,32 +14,40 @@ async function getApps() {
   }
 }
 
+async function runApplet(data) {
+  const response = await fetch("http://localhost:8080/run-applet", {
+    method: "POST",
+    body: data,
+  });
+  if (response.ok) {
+    const json = await response.json();
+    return json;
+  }
+}
+
 function MyApplets() {
   const [applets, setApps] = useState([]);
+  const [responseFromServer, setResponseFromServer] = useState("");
 
-  const handleClick = (app_name) => {
+  const handleClick = async (app_name) => {
     const data = { app_name };
 
-    fetch("localhost:8080/run-applet", {
+    // Make POST request to Flask server
+    fetch("/run-applet", {
       method: "POST",
-      header: {
+      headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(data),
     })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        return response.json();
-      })
-      .then((responseData) => {
-        // handle server response
-        console.log(responseData);
+      .then((response) => response.json())
+      .then((data) => {
+        setResponseFromServer(data.result); // assuming server sends back JSON response with "result" field
       })
       .catch((error) => {
-        console.error("Error: ", error);
+        console.error("Error:", error);
       });
+
     alert(`Request to run: ${app_name}`);
   };
 
