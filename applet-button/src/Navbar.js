@@ -1,18 +1,16 @@
-/* Navbar.css */
+// Navbar.js
+import React from 'react';
+import './Navbar.css';
 
-.navbar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    background-color: black;
-    color: #fff;
-    padding: 10px 20px;
-    z-index: 1000;
+function Navbar() {
+    return (
+        <div className="navbar">
+            <a href="/generate">Generate Applet</a>
+            <a href="/my-apps">My Applets</a>
+            <a href="/shared-apps">Community</a>
+            <a href="/about">About</a>
+        </div>
+    );
 }
 
-.navbar a {
-    margin-right: 20px;
-    text-decoration: none;
-    color: white;
-}
+export default Navbar
