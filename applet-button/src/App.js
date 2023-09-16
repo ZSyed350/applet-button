@@ -5,6 +5,7 @@ import Terminal from './Terminal';
 function App() {
   return (
     <div className="App">
+      <Navbar />
       <Terminal />
     </div>
   );
