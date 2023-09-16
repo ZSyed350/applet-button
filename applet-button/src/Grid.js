@@ -5,23 +5,6 @@ import Button from "./Button";
 function Grid({ numButtons }) {
   const buttons = [];
 
-  // const fs = require('fs');
-  // const directoryPath = '../../applets';
-
-  // fs.readdir(directoryPath, (err, files => {
-  //     if (err) {
-  //         console.error('Error reading directory: ', err);
-  //         return;
-  //     }
-
-  //     console.log('Files in the directory', files);
-
-  //     // process the files
-  // }));
-  // parse the files
-  // get the names
-  // numButtons = numFiles
-
   for (let i = 1; i <= numButtons; i++) {
     buttons.push(
       <Button
