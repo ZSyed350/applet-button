@@ -7,6 +7,7 @@ Essential features:
     - [ ] Community Applets
         - [ ] Community Applets upload & download
     - [ ] Make stuff look nice
+    - [x] Emoji icon generation
     - [ ] Interacting with Applet input/output
 
 - Generation
