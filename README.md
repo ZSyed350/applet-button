@@ -29,11 +29,11 @@ Essential features:
     - [ ] Interacting with Applet input/output
 
 - Generation
-    - [ ] Better reverse prompting
+    - [x] Better reverse prompting
     - [ ] Virtual environment generation
 
 Nice-to-have features:
-- [ ] Semantic search for community applets
+- [x] Semantic search for applets
 - [ ] Low-code/no-code applet summaries for user feedback
 - [ ] User containers
 - [ ] ICP Integration

@@ -16,12 +16,7 @@ engine = "gpt-3.5-turbo"
 max_tokens = 2048
 feedback = ""
 
-PLACEHOLDERS = {
-    "email": ["example@email.com", "user@example.com"],
-    "phone": ["123-456-7890", "(123) 456-7890"],
-    # ... add other placeholders as needed
-}
-
+openai.Model.list()
 
 def extract_python_code(s: str) -> str:
     pattern = r'```python(.*?)```'
@@ -35,7 +30,7 @@ def create_openai_chat_response(prompt: str) -> str:
     """Create a chat response using OpenAI API."""
     global feedback
     if feedback != "":
-        prompt = f"This is what should be most important. Modify the code to follow the feedback as given: {feedback} \n{prompt}"
+        prompt = f"[no prose] This is what should be most important. Modify the code to follow the feedback as given: {feedback} \n{prompt} "
     response = openai.ChatCompletion.create(
         model=engine,
         messages=[{"role": "user", "content": prompt}],
@@ -43,16 +38,14 @@ def create_openai_chat_response(prompt: str) -> str:
         max_tokens=max_tokens,
     )
     completion = response["choices"][0]["message"]["content"]  # type: ignore
-    #completion = extract_python_code(completion)
-    filtered_completion = completion.replace(
-        "```python", "").replace("```", "")
-    return filtered_completion
+    completion = extract_python_code(completion)
+    return completion
 
 
 def generate_code_from_prompt(prompt: str, error: str = "") -> str:
     print("Generating code")
     """Generate Python code using OpenAI API based on the given prompt."""
-    prompt = f"Only return python code to this problem with proper indentation and do not include any test suite in the output if given: {prompt}\nPython script:"
+    prompt = f"Only return python code to this problem with proper indentation and do not include any test suite in the output if given: {prompt}\nPython script: "
     if error:
         prompt = f"{prompt}\nError encountered, please write code to fix: {error}"
 
@@ -62,14 +55,14 @@ def generate_code_from_prompt(prompt: str, error: str = "") -> str:
 def generate_test_cases_from_prompt(prompt: str) -> str:
     print("Generating test cases")
     """Generate Python test cases using OpenAI API based on the given prompt."""
-    prompt = f"{prompt}\nOnly write the Python test case code that will validate if the function works. If you provide explanations or extra statements such as 'Here is the Python test case', provide it as a comment with #. Write a main function that will run the test suite when run as the file. If the python function uses a GUI then do not write proper tests and write one test that will return true after running the function:"
+    prompt = f"[no prose] {prompt}\nOnly write the Python test case code that will validate if the function works. If you provide explanations or extra statements such as 'Here is the Python test case', provide it as a comment with #. Write a main function that will run the test suite when run as the file. If the python function uses a GUI then do not write proper tests and write one test that will return true after running the function: "
     return create_openai_chat_response(prompt)
 
 def generate_code_and_test(prompt0: str):
     print("Generating code and test cases")
     """Generate code and test cases based on the given prompt."""
     code = generate_code_from_prompt(prompt0)
-    test_prompt = f"The prompt: {prompt0} \nThe code: {code}"
+    test_prompt = f"[no prose] The prompt: {prompt0} \nThe code: {code}"
     test_cases = generate_test_cases_from_prompt(test_prompt)
     return code, test_cases
 
@@ -77,7 +70,7 @@ def generate_unicode_emoji_from_prompt(prompt: str) -> str:
     """
     Generate a Unicode representation for an emoji based on the given prompt.
     """
-    prompt_for_emoji = f"Output a single suitable emoji (in Unicode format) for an applet that {prompt}? Only output Unicode, NOTHING ELSE."
+    prompt_for_emoji = f"[no prose] Output a single suitable emoji (in Unicode format) for an applet that {prompt}? Only output Unicode, NOTHING ELSE. "
     emoji_suggestion = create_openai_chat_response(prompt_for_emoji)
     print(emoji_suggestion)
     
@@ -96,12 +89,20 @@ def generate_unicode_emoji_from_prompt(prompt: str) -> str:
 def generate_file_name_from_prompt(prompt: str) -> str:
     print("Generating filename")
     """Generate file using OpenAI API based on the given prompt."""
-    prompt = f"Create a short python file name with the file extension for this task: {prompt}"
-    return create_openai_chat_response(prompt)
+    prompt = f"Create a short python file name with the file extension for this task: {prompt}. DO NOT INCLUDE PROSE. "
+    filename = create_openai_chat_response(prompt)
+    print("Filename: ", filename)
+    
+    # Check if filename is blank and provide a fallback
+    if not filename.strip():
+        print("OpenAI API returned an empty filename. Using a default filename. ")
+        filename = "generated_code.py"
+        
+    return filename
 
 
 def write_code_to_file(code: str, filename: str):
-    print("Writing code to file")
+    print("[no prose] Writing code to file")
     """Write the given code to a file with the given filename."""
     with open(filename, 'w') as f:
         f.write(code)
@@ -160,6 +161,12 @@ def reverse_prompt(code):
     Analyzes generated code for placeholders and prompts the user to provide specifics.
     Returns the code with user-provided values.
     """
+    PLACEHOLDERS = {
+    "email": ["example@email.com", "user@example.com"],
+    "phone": ["123-456-7890", "(123) 456-7890"],
+    "password": ["yourpassword"],
+    # ... add other placeholders as needed
+    }
     for category, placeholders in PLACEHOLDERS.items():
         for placeholder in placeholders:
             if placeholder in code:
@@ -182,14 +189,14 @@ def code_loop(prompt0: str = "", test_cases: str = "", error: str = "", loop: in
 
     prompt0 = prompt0 if prompt0 else input("Please enter the prompt for the task: ")
     title = title if title else generate_file_name_from_prompt(
-            f"Create a short python file name with the file extension for this task: {prompt0}") 
+            f"Create a short python file name with the file extension for this task: {prompt0}. If you need user-specific information, such as an email address, phone number, or password, prompt the user for more information. ") 
     unicode_emoji = generate_unicode_emoji_from_prompt(prompt0)
     error = error if error else user_feedback       
     code = generate_code_from_prompt(prompt0, error) 
     reverse_prompt(code)
 
     if not test_cases:
-        test_prompt = f"The prompt: {prompt0} \nThe code: {code}"
+        test_prompt = f"[no prose] The prompt: {prompt0} \nThe code: {code} "
         test_cases = generate_test_cases_from_prompt(test_prompt)
     error, test_str = save_and_run_tests(code, test_cases, title)
 
@@ -199,10 +206,10 @@ def code_loop(prompt0: str = "", test_cases: str = "", error: str = "", loop: in
             code_loop(prompt0, test_cases, error, loop, title)
             error = ""
         except:
-            return code, test_cases, False        
+            return code, test_cases, False, unicode_emoji
 
     if is_server:
-        return code, test_cases, True
+        return code, test_cases, True, unicode_emoji
     
     display_code_info(code, test_cases, error)
 
