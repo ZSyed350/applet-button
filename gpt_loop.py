@@ -85,10 +85,10 @@ def get_user_feedback():
     if user_input.lower() == "y":
         print("Great! Your applet has been saved.")
         delete_files('test.py', 'checker.py')
-        return None
+        return ""
     elif user_input.lower() == "n":
         feedback = input("Please entery any feedback.\nFeedback: ")
-        return "Human feedback given"
+        return feedback
     else:
         return get_user_feedback()
     
@@ -124,36 +124,42 @@ save_dir = Path(__file__).parent / "applets"
 print(save_dir)
 
 #TODO co.generate to sprinkle joy
-def code_loop(prompt0: str = "", test_cases: str = "", error: str = "", loop: int = 0, title: str = "", max_loops: int = 10):
+def code_loop(prompt0: str = "", test_cases: str = "", error: str = "", loop: int = 0, title: str = "", user_feedback: str = "", max_loops: int = 10, is_server: bool= False):
     """Run a loop that generates Python code, writes them to files, and runs the code."""
 
     if loop >= max_loops:
-        print("Error: Maximum loop count reached! Process terminated.")
-        return
-    
+        raise Exception("Error: Maximum loop count reached! Process terminated.")    
     loop += 1
     print(f"Loop: {loop}")
 
-    if not prompt0:
-        prompt0 = input("Please enter the prompt for the task: ")
-        title = generate_file_name_from_prompt(
-            f"Create a short python file name with the file extension for this task: {prompt0}")
-        code = generate_code_from_prompt(prompt0)
-        if not test_cases:
-            test_prompt = f"The prompt: {prompt0} \nThe code: {code}"
-            test_cases = generate_test_cases_from_prompt(test_prompt)
+    prompt0 = prompt0 if prompt0 else input("Please enter the prompt for the task: ")
+    title = title if title else generate_file_name_from_prompt(
+            f"Create a short python file name with the file extension for this task: {prompt0}") 
+    error = error if error else user_feedback       
+    code = generate_code_from_prompt(prompt0, error)    
 
-    else:
-        code = generate_code_from_prompt(prompt0, error)
-
+    if not test_cases:
+        test_prompt = f"The prompt: {prompt0} \nThe code: {code}"
+        test_cases = generate_test_cases_from_prompt(test_prompt)
     error, test_str = save_and_run_tests(code, test_cases, title)
-    display_code_info(code, test_cases, error)
-
-    if test_str and not error:
-        error = get_user_feedback()
 
     if error:
-        code_loop(prompt0, test_cases, error, loop, title)
+        try:
+            print(error)
+            code_loop(prompt0, test_cases, error, loop, title)
+            error = ""
+        except:
+            return code, test_cases, False        
+
+    if is_server:
+        return code, test_cases, True
+    
+    display_code_info(code, test_cases, error)
+
+    if test_str:
+        user_feedback = get_user_feedback()
+        if user_feedback:
+            code_loop(prompt0, test_cases, error, 0, title, user_feedback) 
 
 
 
