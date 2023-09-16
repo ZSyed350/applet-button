@@ -15,7 +15,6 @@ engine = "gpt-3.5-turbo"
 max_tokens = 2048
 feedback = ""
 
-
 def create_openai_chat_response(prompt: str) -> str:
     """Create a chat response using OpenAI API."""
     global feedback
@@ -85,6 +84,7 @@ def get_user_feedback():
     user_input = input("Are you happy with this applet? (y/n): ")
     if user_input.lower() == "y":
         print("Great! Your applet has been saved.")
+        delete_files('test.py', 'checker.py')
         return None
     elif user_input.lower() == "n":
         feedback = input("Please entery any feedback.\nFeedback: ")
@@ -111,6 +111,13 @@ def display_code_info(code: str, test_cases: str, error: str):
     print(f"Error: \n{error}")
     print('=====================')
 
+def delete_files(*filenames):
+    """Delete specified files if they exist."""
+    for filename in filenames:
+        try:
+            os.remove(filename)
+        except FileNotFoundError:
+            pass
 
 save_dir = Path(__file__).parent / "applets"
 
