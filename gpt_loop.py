@@ -117,7 +117,7 @@ save_dir = Path(__file__).parent / "applets"
 print(save_dir)
 
 #TODO co.generate to sprinkle joy
-def code_loop(og_prompt: str = "", test_cases: str = "", error: str = "", loop: int = 0, title: str = "", max_loops: int = 10):
+def code_loop(prompt0: str = "", test_cases: str = "", error: str = "", loop: int = 0, title: str = "", max_loops: int = 10):
     """Run a loop that generates Python code, writes them to files, and runs the code."""
 
     if loop >= max_loops:
@@ -127,17 +127,17 @@ def code_loop(og_prompt: str = "", test_cases: str = "", error: str = "", loop: 
     loop += 1
     print(f"Loop: {loop}")
 
-    if not og_prompt:
-        og_prompt = input("Please enter the prompt for the task: ")
+    if not prompt0:
+        prompt0 = input("Please enter the prompt for the task: ")
         title = generate_file_name_from_prompt(
-            f"Create a short python file name with the file extension for this task: {og_prompt}")
-        code = generate_code_from_prompt(og_prompt)
+            f"Create a short python file name with the file extension for this task: {prompt0}")
+        code = generate_code_from_prompt(prompt0)
         if not test_cases:
-            test_prompt = f"The prompt: {og_prompt} \nThe code: {code}"
+            test_prompt = f"The prompt: {prompt0} \nThe code: {code}"
             test_cases = generate_test_cases_from_prompt(test_prompt)
 
     else:
-        code = generate_code_from_prompt(og_prompt, error)
+        code = generate_code_from_prompt(prompt0, error)
 
     error, test_str = save_and_run_tests(code, test_cases, title)
     display_code_info(code, test_cases, error)
@@ -146,7 +146,7 @@ def code_loop(og_prompt: str = "", test_cases: str = "", error: str = "", loop: 
         error = get_user_feedback()
 
     if error:
-        code_loop(og_prompt, test_cases, error, loop, title)
+        code_loop(prompt0, test_cases, error, loop, title)
 
 
 
