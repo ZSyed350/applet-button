@@ -18,8 +18,29 @@ function MyApplets() {
   const [applets, setApps] = useState([]);
 
   const handleClick = (app_name) => {
-    // Add your code to execute here
-    alert(`Button clicked with app name: ${app_name}`);
+    const data = { app_name };
+
+    fetch("localhost:8080/run-applet", {
+      method: "POST",
+      header: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
+      })
+      .then((responseData) => {
+        // handle server response
+        console.log(responseData);
+      })
+      .catch((error) => {
+        console.error("Error: ", error);
+      });
+    alert(`Request to run: ${app_name}`);
   };
 
   async function loadApps() {

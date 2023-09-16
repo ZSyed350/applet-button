@@ -53,5 +53,14 @@ def get_community_apps():
     }
     return response, 200
 
+@app.route('/run-applet', methods=['POST'])
+def run_applet():
+    data = request.get_json()
+    app_name = data.get('app_name')
+
+    result = "The app name is " + app_name
+    # Call applet here
+    return {'result': result}
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080)
