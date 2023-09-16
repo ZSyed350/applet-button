@@ -63,3 +63,66 @@ def run_code(filename: str) -> str:
 save_dir = Path(__file__).parent / "generated"
 
 print(save_dir)
+
+def code_loop(new_prompt: str = "", og_prompt: str = "", error: str = "", loop: int = 0, title: str = ""):
+    """Run a loop that generates Python code and test cases, writes them to files, and runs the code."""
+    loop += 1
+    print(f"Loop: {loop}")
+    if new_prompt and not error:
+        inp = input("Are you happy with this code? (y/n): ")
+        if inp.lower() == "y":
+            print("Great! Your code is ready to submit!")
+            return
+        elif inp.lower() == "n":
+            global feedback
+
+            feedback = input(
+                "Please enter the feedback you would like to give to the AI.\nFeedback: ")
+            error = "Human feedback given"
+            code_loop(new_prompt, og_prompt, error, loop, title)
+    elif new_prompt == "":
+        og_prompt = input("Please enter the prompt for the task: ")
+        # og_prompt = "Create a gui that will display a button that will display a message when clicked"
+        title = gen_file_name_from_prompt(
+            f"Create a short python file name with the file extension for this task: {og_prompt}")
+        code = gen_code_from_prompt(og_prompt)
+        test_prompt = f"The prompt: {og_prompt} \nThe code: {code}"
+        test_cases = gen_test_cases_from_prompt(test_prompt)
+
+        # Write both the code and test cases to the same file
+        write_code_to_file(code, save_dir/title)
+        write_code_to_file(test_cases, 'test.py')
+        test_str = f"{code} \n{test_cases}"
+        write_code_to_file(test_str, 'checker.py')
+        error = run_code("checker.py")
+        print('=====================')
+        print(f"Code: \n{code}")
+        print('---------------------')
+        print(f"Test Cases: \n{test_cases}")
+        print('---------------------')
+        print(f"Error: \n{error}")
+        print('=====================')
+
+        code_loop(test_str, og_prompt, error, loop, title)
+    else:
+        prompt = f"previous code with the test suite: {new_prompt} \n error output: {error}"
+        code_prompt = f"{prompt} \nWrite new code to fix the error"
+        code = gen_code_from_prompt(code_prompt)
+        test_prompt = f"The prompt: {og_prompt} \n The code: {code}"
+        test_cases = gen_test_cases_from_prompt(test_prompt)
+        write_code_to_file(code, title)
+        write_code_to_file(test_cases, 'test.py')
+        test_str = f"{code} \n{test_cases}"
+        write_code_to_file(test_str, 'checker.py')
+        error = run_code("checker.py")
+        print('=====================')
+        print(f"Code: \n{code}")
+        print('---------------------')
+        print(f"Test Cases: \n{test_cases}")
+        print('---------------------')
+        print(f"Error: \n{error}")
+        print('=====================')
+        code_loop(test_str, og_prompt, error, loop, title)
+
+if __name__ == "__main__":
+    code_loop()
