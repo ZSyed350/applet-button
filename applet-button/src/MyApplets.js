@@ -42,7 +42,7 @@ function MyApplets() {
     <Center p="1em">
       <Grid templateColumns="repeat(3, 1fr)" gap={3}>
         {applets.map((app, i) => (
-          <Center key={i} w="100px" h="100px" bg="#888888">
+          <Center key={i} w="100px" h="100px" bg="#7eb7ed" borderRadius="10px">
             <VStack>
               <Text>{app}</Text>
               <Button onClick={() => handleClick(app)}>Run</Button>

@@ -51,7 +51,8 @@ def generate_code_from_prompt(prompt: str, error: str = "") -> str:
 
     return create_openai_chat_response(prompt)
 
-def generate_interactive
+def generate_interactive():
+    return
 
 def generate_test_cases_from_prompt(prompt: str) -> str:
     print("Generating test cases")
