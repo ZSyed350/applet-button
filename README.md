@@ -1,5 +1,13 @@
-### TODO:
+# Name McName
+- Generate an applet from user prompts
+	- Code + test cases
+	- Self-debugging and testing
+	- Name and icon generation
+	- Reverse prompting
+- Save your applets to be re-used
+- Share your applets with other people
 
+### TODO:
 Essential features:
 
 - UI
