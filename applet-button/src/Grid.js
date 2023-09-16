@@ -1,6 +1,6 @@
 // Grid.js
 import React from 'react';
-import Button from '/Button'
+import Button from './Button'
 
 function Grid({ numButtons }) {
     const buttons = [];
