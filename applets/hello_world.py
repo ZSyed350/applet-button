@@ -1,5 +1,11 @@
+def hello_world():
+    return "Hello, world!"
 
-def say_hello():
-    print("Hello, world!")
+def test_hello_world():
+    assert hello_world() == "Hello, world!"
 
-say_hello()
+def main():
+    test_hello_world()
+
+if __name__ == "__main__":
+    main()

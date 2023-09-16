@@ -156,7 +156,7 @@ def code_loop(prompt0: str = "", test_cases: str = "", error: str = "", loop: in
     if error:
         try:
             print(error)
-            code_loop(prompt0, test_cases, error, loop, title)
+            code_loop(prompt0, test_cases, error, loop, title, is_server=is_server)
             error = ""
         except:
             return code, test_cases, False        

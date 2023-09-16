@@ -1,10 +1,11 @@
 # Here is the Python test case
-def test_say_hello():
-    assert say_hello() == None
+def test_hello_world():
+    assert hello_world() == "Hello, world!"
 
-# Main function to run the test suite
+# Write a main function that will run the test suite when run as the file
 def main():
-    test_say_hello()
+    test_hello_world()
 
+# Run the main function
 if __name__ == "__main__":
     main()
