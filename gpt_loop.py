@@ -2,6 +2,7 @@ import os
 import openai
 import subprocess
 from pathlib import Path
+import re
 
 import dotenv
 dotenv.load_dotenv()
@@ -15,6 +16,14 @@ engine = "gpt-3.5-turbo"
 max_tokens = 2048
 feedback = ""
 
+def extract_python_code(s: str) -> str:
+    pattern = r'```python(.*?)```'
+    match = re.search(pattern, s, re.DOTALL)
+    if match:
+        return match.group(1).strip()
+    else:
+        return ""
+
 def create_openai_chat_response(prompt: str) -> str:
     """Create a chat response using OpenAI API."""
     global feedback
@@ -27,6 +36,7 @@ def create_openai_chat_response(prompt: str) -> str:
         max_tokens=max_tokens,
     )
     completion = response["choices"][0]["message"]["content"]  # type: ignore
+    #completion = extract_python_code(completion)
     filtered_completion = completion.replace(
         "```python", "").replace("```", "")
     return filtered_completion
