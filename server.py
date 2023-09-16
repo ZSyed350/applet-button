@@ -41,7 +41,17 @@ def get_my_apps():
         'applets' : applets
     }
     return response, 200
-    
+
+@app.route('/get_community_apps', methods=['POST'])
+def get_community_apps():
+    # get the list of files in the applets folder
+    applets = os.listdir('community')
+    # remove the .py extension
+    applets = [applet[:-3] for applet in applets]
+    response =  {
+        'applets' : applets
+    }
+    return response, 200
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=8080)
