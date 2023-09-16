@@ -1,16 +1,19 @@
 // Navbar.js
-import React from 'react';
-import './Navbar.css';
+import { HStack } from "@chakra-ui/react";
+import React from "react";
+import { Link } from "react-router-dom";
+import "./Navbar.css";
 
 function Navbar() {
-    return (
-        <div className="navbar">
-            <a href="/generate">Generate Applet</a>
-            <a href="/my-apps">My Applets</a>
-            <a href="/shared-apps">Community</a>
-            <a href="/about">About</a>
-        </div>
-    );
+  return (
+    <HStack className="navbar">
+      <Link to="/">Home</Link>
+      <Link to="/generate">Generate Applet</Link>
+      <Link to="/my-apps">My Applets</Link>
+      {/* <Link to="shared-apps">Community</Link> */}
+      {/* <Link to="about">About</Link> */}
+    </HStack>
+  );
 }
 
-export default Navbar
+export default Navbar;
