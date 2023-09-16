@@ -73,6 +73,25 @@ def generate_code_and_test(prompt0: str):
     test_cases = generate_test_cases_from_prompt(test_prompt)
     return code, test_cases
 
+def generate_unicode_emoji_from_prompt(prompt: str) -> str:
+    """
+    Generate a Unicode representation for an emoji based on the given prompt.
+    """
+    prompt_for_emoji = f"Output a single suitable emoji (in Unicode format) for an applet that {prompt}? Only output Unicode, NOTHING ELSE."
+    emoji_suggestion = create_openai_chat_response(prompt_for_emoji)
+    print(emoji_suggestion)
+    
+    # Convert the suggested emoji to its Unicode representation.
+    # If the result is not a valid emoji or if the response is not clear, default to U+2699 (⚙️ - gear).
+    try:
+        unicode_emoji = "U+" + "-".join([f"{ord(char):X}" for char in emoji_suggestion])
+        # A simple check for valid Unicode emojis can be done based on length or other criteria.
+        if len(emoji_suggestion) > 2:
+            return "U+2699"  # Default to ⚙️ (gear) 
+        return unicode_emoji
+    except:
+        return "U+2699"  # Default to ⚙️ (gear) 
+
 
 def generate_file_name_from_prompt(prompt: str) -> str:
     print("Generating filename")
@@ -164,6 +183,7 @@ def code_loop(prompt0: str = "", test_cases: str = "", error: str = "", loop: in
     prompt0 = prompt0 if prompt0 else input("Please enter the prompt for the task: ")
     title = title if title else generate_file_name_from_prompt(
             f"Create a short python file name with the file extension for this task: {prompt0}") 
+    unicode_emoji = generate_unicode_emoji_from_prompt(prompt0)
     error = error if error else user_feedback       
     code = generate_code_from_prompt(prompt0, error) 
     reverse_prompt(code)
