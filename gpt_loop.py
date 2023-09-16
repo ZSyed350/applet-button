@@ -16,6 +16,13 @@ engine = "gpt-3.5-turbo"
 max_tokens = 2048
 feedback = ""
 
+PLACEHOLDERS = {
+    "email": ["example@email.com", "user@example.com"],
+    "phone": ["123-456-7890", "(123) 456-7890"],
+    # ... add other placeholders as needed
+}
+
+
 def extract_python_code(s: str) -> str:
     pattern = r'```python(.*?)```'
     match = re.search(pattern, s, re.DOTALL)
@@ -129,6 +136,18 @@ def delete_files(*filenames):
         except FileNotFoundError:
             pass
 
+def reverse_prompt(code):
+    """
+    Analyzes generated code for placeholders and prompts the user to provide specifics.
+    Returns the code with user-provided values.
+    """
+    for category, placeholders in PLACEHOLDERS.items():
+        for placeholder in placeholders:
+            if placeholder in code:
+                user_value = input(f"Please provide a value for {category}: ")
+                code = code.replace(placeholder, user_value)
+    return code
+
 save_dir = Path(__file__).parent / "applets"
 
 print(save_dir)
@@ -146,7 +165,8 @@ def code_loop(prompt0: str = "", test_cases: str = "", error: str = "", loop: in
     title = title if title else generate_file_name_from_prompt(
             f"Create a short python file name with the file extension for this task: {prompt0}") 
     error = error if error else user_feedback       
-    code = generate_code_from_prompt(prompt0, error)    
+    code = generate_code_from_prompt(prompt0, error) 
+    reverse_prompt(code)
 
     if not test_cases:
         test_prompt = f"The prompt: {prompt0} \nThe code: {code}"
@@ -156,7 +176,7 @@ def code_loop(prompt0: str = "", test_cases: str = "", error: str = "", loop: in
     if error:
         try:
             print(error)
-            code_loop(prompt0, test_cases, error, loop, title, is_server=is_server)
+            code_loop(prompt0, test_cases, error, loop, title)
             error = ""
         except:
             return code, test_cases, False        

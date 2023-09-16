@@ -15,7 +15,7 @@ function Terminal() {
     formData.append('prompt', input);
 
     try {
-      const response = await fetch('http://localhost:5000/generate', {
+      const response = await fetch('http://localhost:8080/generate', {
         method: 'POST',
         body: formData,
       });
