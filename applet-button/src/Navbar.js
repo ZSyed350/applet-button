@@ -11,7 +11,7 @@ function Navbar() {
         <Link to="/">Home</Link>
         <Link to="/generate">Generate Applet</Link>
         <Link to="/my-apps">My Applets</Link>
-        {/* <Link to="shared-apps">Community</Link> */}
+        <Link to="shared-apps">Community</Link>
         <Link to="about">About</Link>
       </Center>
     </HStack>
