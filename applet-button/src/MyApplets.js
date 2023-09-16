@@ -1,6 +1,6 @@
 // Terminal.js
-import { Box, Button, Text } from "@chakra-ui/react";
-import React, { useEffect } from "react";
+import { Box, Button, Text, Center, Spinner, VStack } from "@chakra-ui/react";
+import React, { useEffect, useState } from "react";
 // import Grid from "./Grid";
 import { Grid } from "@chakra-ui/react";
 
@@ -15,25 +15,41 @@ async function getApps() {
 }
 
 function MyApplets() {
-  const [apps, setApps] = React.useState([]);
+  const [applets, setApps] = useState([]);
+
+  async function loadApps() {
+    const response = await getApps();
+    setApps(response.applets);
+  }
 
   useEffect(() => {
-    const response = getApps();
-    response.then((data) => {
-      console.log(data);
-      setApps(data);
-    });
+    loadApps();
   }, []);
 
+  if (applets.length === 0)
+    return (
+      <Center>
+        <Spinner />
+      </Center>
+    );
+
   return (
-    <Box>
-      <Grid>
-        {apps.length > 0 &&
-          apps.map((app) => <Box key={app.id}>{app.name}</Box>)}
+    <Center p="1em">
+      <Grid templateColumns="repeat(3, 1fr)" gap={3}>
+        {applets.map((app, i) => (
+          <Center key={i} w="100px" h="100px" bg="#888888">
+            <VStack>
+              <Text>{app}</Text>
+              <Button>Run</Button>
+            </VStack>
+          </Center>
+        ))}
       </Grid>
-      <Text>adsfiuosafhioasdhfiahf</Text>
-      <Button>Test</Button>
-    </Box>
+
+      <Grid></Grid>
+      {/* <Text>adsfiuosafhioasdhfiahf</Text> */}
+      {/* <Button>Test</Button> */}
+    </Center>
   );
 }
 
