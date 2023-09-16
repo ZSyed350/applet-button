@@ -1,6 +1,7 @@
 from flask import Flask, request
 from flask_cors import CORS
 from gpt_loop import code_loop
+import os
 app = Flask(__name__)
 CORS(app)
 
@@ -28,7 +29,17 @@ def user_feedback():
     }
     return response, 200
 
-
+@app.route('/get_my_apps', methods=['POST'])
+def get_my_apps():
+    # get the list of files in the applets folder
+    applets = os.listdir('applets')
+    # remove the .py extension
+    applets = [applet[:-3] for applet in applets]
+    response =  {
+        'applets' : applets
+    }
+    return response, 200
+    
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
