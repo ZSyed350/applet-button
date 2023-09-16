@@ -29,5 +29,10 @@ def user_feedback():
 
 
 
+<<<<<<< HEAD
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
+=======
+if __name__ == 'main':
+    app.run(host='0.0.0.0', port=5000)
+>>>>>>> b70579d58f7f7c311bb66313381f742028b0af02
