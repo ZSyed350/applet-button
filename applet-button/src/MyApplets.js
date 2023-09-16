@@ -1,5 +1,5 @@
 // Terminal.js
-import { Box, Button, Text, Center, Spinner, VStack } from "@chakra-ui/react";
+import { Button, Text, Center, Spinner, VStack } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 // import Grid from "./Grid";
 import { Grid } from "@chakra-ui/react";
@@ -16,6 +16,11 @@ async function getApps() {
 
 function MyApplets() {
   const [applets, setApps] = useState([]);
+
+  const handleClick = (app_name) => {
+    // Add your code to execute here
+    alert(`Button clicked with app name: ${app_name}`);
+  };
 
   async function loadApps() {
     const response = await getApps();
@@ -40,7 +45,7 @@ function MyApplets() {
           <Center key={i} w="100px" h="100px" bg="#888888">
             <VStack>
               <Text>{app}</Text>
-              <Button>Run</Button>
+              <Button onClick={() => handleClick(app)}>Run</Button>
             </VStack>
           </Center>
         ))}
