@@ -1,36 +1,44 @@
 import os
-import openai
+import cohere
 import subprocess
 from pathlib import Path
+import re
 
 import dotenv
 dotenv.load_dotenv()
 
 assert os.getenv(
-    "OPENAI_API_KEY") is not None, "Please set OPENAI_API_KEY in .env file"
+    "COHERE_API_KEY") is not None, "Please set OPENAI_API_KEY in .env file"
 
 # Please replace `your-openai-api-key` with your own OpenAI API key
-openai.api_key = os.getenv("OPENAI_API_KEY")
-engine = "gpt-3.5-turbo"
+co = cohere.Client(os.getenv("COHERE_API_KEY"))
 max_tokens = 2048
 feedback = ""
 
-def create_openai_chat_response(prompt: str) -> str:
+def create_cohere_response(prompt: str) -> str:
     """Create a chat response using OpenAI API."""
     global feedback
     if feedback != "":
         prompt = f"This is what should be most important. Modify the code to follow the feedback as given: {feedback} \n{prompt}"
-    response = openai.ChatCompletion.create(
-        model=engine,
-        messages=[{"role": "user", "content": prompt}],
+    response = co.generate(
+        prompt=prompt,
         temperature=0.5,
         max_tokens=max_tokens,
     )
-    completion = response["choices"][0]["message"]["content"]  # type: ignore
-    filtered_completion = completion.replace(
-        "```python", "").replace("```", "")
-    return filtered_completion
+    completion = response.generations[0].text  # type: ignore
+    #extracted_code = extract_python_code(completion)
+    #filtered_completion = extracted_code.replace(
+    #    "```python", "").replace("```", "")
+    print(completion)
+    return completion
 
+def extract_python_code(s: str) -> str:
+    pattern = r'```python(.*?)```'
+    match = re.search(pattern, s, re.DOTALL)
+    if match:
+        return match.group(1).strip()
+    else:
+        return ""
 
 def generate_code_from_prompt(prompt: str, error: str = "") -> str:
     print("Generating code")
@@ -39,14 +47,14 @@ def generate_code_from_prompt(prompt: str, error: str = "") -> str:
     if error:
         prompt = f"{prompt}\nError encountered, please write code to fix: {error}"
 
-    return create_openai_chat_response(prompt)
+    return create_cohere_response(prompt)
 
 
 def generate_test_cases_from_prompt(prompt: str) -> str:
     print("Generating test cases")
     """Generate Python test cases using OpenAI API based on the given prompt."""
     prompt = f"{prompt}\nOnly write the Python test case code that will validate if the function works. If you provide explanations or extra statements such as 'Here is the Python test case', provide it as a comment with #. Write a main function that will run the test suite when run as the file. If the python function uses a GUI then do not write proper tests and write one test that will return true after running the function:"
-    return create_openai_chat_response(prompt)
+    return create_cohere_response(prompt)
 
 def generate_code_and_test(prompt0: str):
     print("Generating code and test cases")
@@ -61,7 +69,7 @@ def generate_file_name_from_prompt(prompt: str) -> str:
     print("Generating filename")
     """Generate file using OpenAI API based on the given prompt."""
     prompt = f"Create a short python file name with the file extension for this task: {prompt}"
-    return create_openai_chat_response(prompt)
+    return create_cohere_response(prompt)
 
 
 def write_code_to_file(code: str, filename: str):
