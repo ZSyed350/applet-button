@@ -6,7 +6,7 @@ const Home = () => {
   return (
     <Center height="90vh">
       <VStack spacing="3em">
-        <Heading>DAN</Heading>
+        <Heading>MAY</Heading>
 
         <Text>A simpler way of creating and sharing your own AI-generated applets.</Text>
 

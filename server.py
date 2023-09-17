@@ -36,7 +36,7 @@ def get_my_apps():
     # get the list of files in the applets folder
     applets = os.listdir('applets')
     # remove the .py extension
-    applets = [applet[:-3] for applet in applets]
+    applets = [applet[:-3].capitalize() for applet in applets]
     response =  {
         'applets' : applets
     }
@@ -47,7 +47,7 @@ def get_community_apps():
     # get the list of files in the applets folder
     applets = os.listdir('community')
     # remove the .py extension
-    applets = [applet[:-3] for applet in applets]
+    applets = [applet[:-3].capitalize() for applet in applets]
     response =  {
         'applets' : applets
     }
