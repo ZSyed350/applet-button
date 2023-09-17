@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from flask_cors import CORS
 from gpt_loop import code_loop
 import os
@@ -52,6 +52,15 @@ def get_community_apps():
         'applets' : applets
     }
     return response, 200
+
+@app.route('/run-applet', methods=['POST'])
+def run_applet():
+    data = request.get_json()
+    app_name = data.get('app_name')
+
+    result = f"Received: {app_name}"
+    # Call applet here
+    return jsonify({'result': result})
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080)
