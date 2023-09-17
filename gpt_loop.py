@@ -114,7 +114,7 @@ def run_code(filename: str) -> str:
     print("Running code")
     """Run a Python code file and return the error output."""
     process = subprocess.Popen(
-        ['python3', filename], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        ['py', filename], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     _, stderr = process.communicate()
     return stderr.decode()
 

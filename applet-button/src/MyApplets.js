@@ -16,10 +16,28 @@ async function getApps() {
 
 function MyApplets() {
   const [applets, setApps] = useState([]);
+  const [responseFromServer, setResponseFromServer] = useState("");
 
-  const handleClick = (app_name) => {
-    // Add your code to execute here
-    alert(`Button clicked with app name: ${app_name}`);
+  const handleClick = async (app_name) => {
+    const data = { app_name };
+
+    // Make POST request to Flask server
+    fetch("/run-applet", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setResponseFromServer(data.result); // assuming server sends back JSON response with "result" field
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+
+    alert(`Request to run: ${app_name}`);
   };
 
   async function loadApps() {
