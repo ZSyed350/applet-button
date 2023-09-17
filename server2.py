@@ -66,7 +66,7 @@ def interact():
         process.stdin.write(user_input + '\n')
         process.stdin.flush()
     except:
-        return jsonify({"functionDone": True}), 200
+        return jsonify({"output": output,"functionDone": True}), 200
 
     # Get the output after writing user input
     output.extend(get_output())
