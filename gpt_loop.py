@@ -16,8 +16,6 @@ engine = "gpt-3.5-turbo"
 max_tokens = 2048
 feedback = ""
 
-openai.Model.list()
-
 def extract_python_code(s: str) -> str:
     pattern = r'```python(.*?)```'
     match = re.search(pattern, s, re.DOTALL)
@@ -25,6 +23,7 @@ def extract_python_code(s: str) -> str:
         return match.group(1).strip()
     else:
         return ""
+    
 
 def create_openai_chat_response(prompt: str) -> str:
     """Create a chat response using OpenAI API."""

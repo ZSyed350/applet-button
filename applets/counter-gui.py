@@ -1,4 +1,3 @@
-Here is the corrected Python code:
 
 
 def fix_code():
