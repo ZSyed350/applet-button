@@ -3,6 +3,7 @@ import { Button, Text, Center, Spinner, VStack } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 // import Grid from "./Grid";
 import { Grid } from "@chakra-ui/react";
+import { useNavigate } from 'react-router-dom';
 
 async function getApps() {
   const response = await fetch("http://localhost:8080/get_my_apps", {
@@ -17,27 +18,29 @@ async function getApps() {
 function MyApplets() {
   const [applets, setApps] = useState([]);
   const [responseFromServer, setResponseFromServer] = useState("");
-
+  const navigate = useNavigate();
   const handleClick = async (app_name) => {
-    const data = { app_name };
+    navigate('/run-app?appName='+app_name+".py");
+    // const data = { "script_name":app_name };
 
-    // Make POST request to Flask server
-    fetch("/run-applet", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setResponseFromServer(data.result); // assuming server sends back JSON response with "result" field
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
+    // // Make POST request to Flask server
+    // fetch("http://localhost:8080/start_script", {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    //   body: JSON.stringify(data),
+    // })
+    //   .then((response) => response.json())
+    //   .then((data) => {
+    //     console.log(data.output)
+    //     setResponseFromServer(data.output); // assuming server sends back JSON response with "result" field
+    //   })
+    //   .catch((error) => {
+    //     console.error("Error:", error);
+    //   });
 
-    alert(`Request to run: ${app_name}`);
+    // alert(`Request to run: ${app_name}`);
   };
 
   async function loadApps() {

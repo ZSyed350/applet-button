@@ -7,6 +7,7 @@ import NavBar from "./Navbar";
 import Terminal from "./Terminal";
 import Home from "./Home";
 import CommunityApplets from "./CommunityApplets";
+import AppTerminal from "./AppTerminal";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
             <Route path="/generate" element={<Terminal />}></Route>
             <Route path="/my-apps" element={<MyApplets />}></Route>
             <Route path="/shared-apps" element={<CommunityApplets />}></Route>
+            <Route path="/run-app" element={<AppTerminal />}></Route>
           </Routes>
         </ChakraProvider>
       </BrowserRouter>
