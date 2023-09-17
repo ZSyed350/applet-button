@@ -14,17 +14,6 @@ async function getApps() {
   }
 }
 
-async function runApplet(data) {
-  const response = await fetch("http://localhost:8080/run-applet", {
-    method: "POST",
-    body: data,
-  });
-  if (response.ok) {
-    const json = await response.json();
-    return json;
-  }
-}
-
 function MyApplets() {
   const [applets, setApps] = useState([]);
   const [responseFromServer, setResponseFromServer] = useState("");
