@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 import subprocess
 import os
 import fcntl
+import time
 app = Flask(__name__)
 
 processes = {}  # This dictionary will store the processes using a unique id as the key.
@@ -18,8 +19,33 @@ def start_script():
     # Generate a unique id for the process (For demonstration purpose using process's pid)
     pid = str(process.pid)
     processes[pid] = process
+    output = []
+    def set_fd_nonblocking(fd):
+        """
+        Set the file description of the given file to non-blocking.
+        """
+        flags = fcntl.fcntl(fd, fcntl.F_GETFL)
+        fcntl.fcntl(fd, fcntl.F_SETFL, flags | os.O_NONBLOCK)
 
-    return jsonify({"message": "Script started", "pid": pid}), 200
+    # Set stdout of the process to non-blocking mode
+    set_fd_nonblocking(process.stdout.fileno())
+    time.sleep(1)
+    def get_output():
+        result = []
+        while True:
+            try:
+                line = process.stdout.readline().strip()
+                if not line:
+                    break
+                print(line)
+                result.append(line)
+            except IOError:
+                break
+        return result
+
+    # Get the output before writing user input
+    output.extend(get_output())
+    return jsonify({"message": "Script started", "pid": pid, "output":output}), 200
 
 @app.route('/interact', methods=['POST'])
 def interact():
@@ -67,7 +93,7 @@ def interact():
         process.stdin.flush()
     except:
         return jsonify({"output": output,"functionDone": True}), 200
-
+    time.sleep(0.5)
     # Get the output after writing user input
     output.extend(get_output())
 
