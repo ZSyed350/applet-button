@@ -8,11 +8,12 @@ CORS(app)
 @app.route('/generate', methods=['POST'])
 def code_generation():
     prompt0 = request.form['prompt']
-    code, test_cases, error = code_loop(prompt0, is_server=True)
+    code, test_cases, error, icon = code_loop(prompt0, is_server=True)
     response = {
         'code': code,
         'test_cases': test_cases,
-        'error': error
+        'error': error,
+        'icon': icon
     }
     return response, 200
 
@@ -21,11 +22,12 @@ def user_feedback():
     title = request.form['title']
     prompt0 = request.form['prompt']
     feedback = request.form['feedback']
-    code, test_cases, error = code_loop(prompt0, title=title, user_feedback=feedback,is_server=True)
+    code, test_cases, error, icon = code_loop(prompt0, title=title, user_feedback=feedback,is_server=True)
     response = {
         'code': code,
         'test_cases': test_cases,
-        'error': error
+        'error': error,
+        'icon': icon
     }
     return response, 200
 
@@ -39,7 +41,17 @@ def get_my_apps():
         'applets' : applets
     }
     return response, 200
-    
+
+@app.route('/get_community_apps', methods=['POST'])
+def get_community_apps():
+    # get the list of files in the applets folder
+    applets = os.listdir('community')
+    # remove the .py extension
+    applets = [applet[:-3] for applet in applets]
+    response =  {
+        'applets' : applets
+    }
+    return response, 200
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=8080)
